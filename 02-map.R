@@ -29,9 +29,18 @@ ds <- map_dfr(file_names, ~ read_tsv(.x,  skip = 8, col_names = c("trial", "spee
 read_our_data <- function(fname) {
   data <- read_tsv(fname,  skip = 8, col_names = c("trial", "speed_actual", "speed_faster", "correct"))
   data <- data %>% mutate(file = fname)
+  data <- data %>% separate(file, into = c(NA, NA, NA, NA, "id","block", NA))
+  data <- data %>% mutate(file = paste(id,block,sep = "_"))
 }
 
 temp <- read_our_data(file_names[1])
 
 #Map file_names to our new function
 ds <- map_dfr(file_names, ~ read_our_data(.x))
+
+
+#Use the short file names to write each subset of data to a new file
+short_files <- ds %>% distinct(file) %>% pull
+map(short_files, ~ write_csv(filter(ds, file == .x), paste0("data_cleaned/",.x,".csv")))
+
+
