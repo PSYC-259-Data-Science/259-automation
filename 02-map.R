@@ -43,4 +43,6 @@ ds <- map_dfr(file_names, ~ read_our_data(.x))
 short_files <- ds %>% distinct(file) %>% pull
 map(short_files, ~ write_csv(filter(ds, file == .x), paste0("data_cleaned/",.x,".csv")))
 
-
+#break these parts down
+map(short_files, ~ filter(ds, file == .x)) #data filtered by short_file name
+map(short_files, ~ paste0("data_cleaned/",.x,".csv")) #file name built by short_file name
