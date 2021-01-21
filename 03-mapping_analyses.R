@@ -32,8 +32,24 @@ ds <- ds %>% mutate(half = temp_var, .before = "class")
 
 ##### MAP ANALYSES --------- 
 
-ds %>% group_split(class) -> ds_class
+#Correlations of one variable to a list of variable names
+vars <- c("x_sum","y_sum","z_sum", "diff_xy","diff_xz", "diff_yz")
+
+cor(ds$a_sum, ds$x_sum)
+cor(ds$a_sum, ds$y_sum)
+cor(ds$a_sum, ds$z_sum)
+
+res <- map(vars, ~ cor(ds$a_sum, select(ds, .x)))
+res$x_sum
+
+res <- map(vars, ~ as.numeric(cor(ds$a_sum, select(ds, .x)))) %>% set_names(vars)
+res$x_sum
+
+
+#Linear models on splits of a data frame
+ds %>% distinct(class) %>% pull %>% as.character -> class_labels
+ds %>% group_split(class) %>% set_names(class_labels) -> ds_class
 map(ds_class, ~ lm(x_sum ~ y_sum, data = .x))
 
-ds %>% group_by(class) %>% group_map(~ lm(x_sum ~ y_sum, data = .x))
-   
+
+
