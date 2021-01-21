@@ -38,7 +38,6 @@ temp <- read_our_data(file_names[1])
 #Map file_names to our new function
 ds <- map_dfr(file_names, ~ read_our_data(.x))
 
-
 #Use the short file names to write each subset of data to a new file
 short_files <- ds %>% distinct(file) %>% pull
 map(short_files, ~ write_csv(filter(ds, file == .x), paste0("data_cleaned/",.x,".csv")))
