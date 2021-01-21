@@ -31,5 +31,7 @@ read_our_data <- function(fname) {
   data <- data %>% mutate(file = fname)
 }
 
+temp <- read_our_data(file_names[1])
+
 #Map file_names to our new function
 ds <- map_dfr(file_names, ~ read_our_data(.x))
