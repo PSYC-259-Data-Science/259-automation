@@ -35,9 +35,11 @@ ds <- ds %>% mutate(half = temp_var, .before = "class")
 #Correlations of one variable to a list of variable names
 vars <- c("x_sum","y_sum","z_sum", "diff_xy","diff_xz", "diff_yz")
 
+#We want to know how each variable is correlated with a reference variable "a_sum"
 cor(ds$a_sum, ds$x_sum)
 cor(ds$a_sum, ds$y_sum)
 cor(ds$a_sum, ds$z_sum)
+
 
 res <- map(vars, ~ cor(ds$a_sum, select(ds, .x)))
 res$x_sum
