@@ -42,14 +42,16 @@ cor(ds$a_sum, ds$z_sum)
 res <- map(vars, ~ cor(ds$a_sum, select(ds, .x)))
 res$x_sum
 
-res <- map(vars, ~ as.numeric(cor(ds$a_sum, select(ds, .x)))) %>% set_names(vars)
+res <- map(vars, ~ cor(ds$a_sum, select(ds, .x))) %>% set_names(vars)
 res$x_sum
 
 
 #Linear models on splits of a data frame
-ds %>% distinct(class) %>% pull %>% as.character -> class_labels
-ds %>% group_split(class) %>% set_names(class_labels) -> ds_class
+
+ds_class <- split(ds, ds$class)
 map(ds_class, ~ lm(x_sum ~ y_sum, data = .x))
 
-
-
+#Create a new factor that combines existing ones
+ds$class_half <- fct_cross(ds$class, ds$half)
+ds_class <- split(ds, ds$class_half)
+map(ds_class, ~ lm(x_sum ~ y_sum, data = .x))
