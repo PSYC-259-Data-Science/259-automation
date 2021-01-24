@@ -32,28 +32,23 @@ ds <- ds %>% mutate(half = temp_var, .before = "class")
 
 ##### MAP ANALYSES --------- 
 
-#Correlations of one variable to a list of variable names
-vars <- c("x_sum","y_sum","z_sum", "diff_xy","diff_xz", "diff_yz")
-
 #We want to know how each variable is correlated with a reference variable "a_sum"
 cor(ds$a_sum, ds$x_sum)
 cor(ds$a_sum, ds$y_sum)
 cor(ds$a_sum, ds$z_sum)
 
+#Correlations of one variable to a list of variable names
+vars <- c("x_sum","y_sum","z_sum", "diff_xy","diff_xz", "diff_yz")
 
+#For each variable in the list, select that variable by name in the cor function
 res <- map(vars, ~ cor(ds$a_sum, select(ds, .x)))
-res$x_sum
-
-res <- map(vars, ~ cor(ds$a_sum, select(ds, .x))) %>% set_names(vars)
-res$x_sum
-
 
 #Linear models on splits of a data frame
 
-ds_class <- split(ds, ds$class)
-map(ds_class, ~ lm(x_sum ~ y_sum, data = .x))
+ds_class <- split(ds, ds$class) #Creates a list of data frames split by class
+map(ds_class, ~ lm(x_sum ~ y_sum, data = .x)) #maps each df to the data element of lm
 
 #Create a new factor that combines existing ones
 ds$class_half <- fct_cross(ds$class, ds$half)
-ds_class <- split(ds, ds$class_half)
+ds_class <- split(ds, ds$class_half) 
 map(ds_class, ~ lm(x_sum ~ y_sum, data = .x))

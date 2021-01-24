@@ -38,16 +38,19 @@ for (file in file_names) {
 
 #What did we do wrong?
 
+
+
 #Redo the example above, but now save "file" into the data frame as an identifier
 ds <- read_tsv(file_names[1],  skip = 8, col_names = c("trial", "speed_actual", "speed_faster", "correct"))
-ds$file <- "file"
+ds$file <- "file" #Does it matter what I put here?
 ds <- ds %>% filter(FALSE)
 
 #Loop through file names
 for (file in file_names) {
   #Read the new data into a temporary dataset
   temp_ds <- read_tsv(file,  skip = 8, col_names = c("trial", "speed_actual", "speed_faster", "correct"))
-  temp_ds$file <- file
+  #Add the file name to the dataset
+  temp_ds$file <- file 
   #Bind (append) the new data to the dataset
   ds <- bind_rows(ds, temp_ds)
 }
