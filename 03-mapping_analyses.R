@@ -40,8 +40,14 @@ cor(ds$a_sum, ds$z_sum)
 #Correlations of one variable to a list of variable names
 vars <- c("x_sum","y_sum","z_sum", "diff_xy","diff_xz", "diff_yz")
 
+#Select gives us an easy way to pick a variable from the list
+cor(ds$a_sum, select(ds, vars[1]))
+
 #For each variable in the list, select that variable by name in the cor function
 res <- map(vars, ~ cor(ds$a_sum, select(ds, .x)))
+
+#Set names to make it easier to access what you need
+res %>% set_names(vars)
 
 #Linear models on splits of a data frame
 
@@ -51,4 +57,4 @@ map(ds_class, ~ lm(x_sum ~ y_sum, data = .x)) #maps each df to the data element 
 #Create a new factor that combines existing ones
 ds$class_half <- fct_cross(ds$class, ds$half)
 ds_class <- split(ds, ds$class_half) 
-map(ds_class, ~ lm(x_sum ~ y_sum, data = .x))
+res <- map(ds_class, ~ lm(x_sum ~ y_sum, data = .x))
