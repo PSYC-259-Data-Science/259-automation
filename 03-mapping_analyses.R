@@ -29,6 +29,7 @@ ds$class_rel <- fct_collapse(ds$class_rel,
 temp_var <-  ds$time > median(ds$time)
 temp_var <- factor(temp_var, levels = c(FALSE, TRUE), labels = c("1st", "2nd"))
 ds <- ds %>% mutate(half = temp_var, .before = "class") 
+ds <- select(ds, time:class, x_sum:diff_yz, a_sum)
 
 ##### MAP ANALYSES --------- 
 
@@ -54,7 +55,10 @@ res %>% set_names(vars)
 ds_class <- split(ds, ds$class) #Creates a list of data frames split by class
 map(ds_class, ~ lm(x_sum ~ y_sum, data = .x)) #maps each df to the data element of lm
 
-#Create a new factor that combines existing ones
-ds$class_half <- fct_cross(ds$class, ds$half)
-ds_class <- split(ds, ds$class_half) 
-res <- map(ds_class, ~ lm(x_sum ~ y_sum, data = .x))
+#Is ds_class a one-time thing? No need to even save it to your environment
+
+res <- split(ds, ds$class) %>% map(~ lm(x_sum ~ y_sum, data = .x)) 
+
+#Can use lots of maps to clean things up, but things can get pretty hairy...loop would be a lot easier to read
+res <- map(res, broom::tidy) #we'll talk more about broom, but basically it's a package for making stats output into tidy tables
+res <- map_df(1:length(res), ~ mutate(res[[.x]], class = names(res)[.x]))

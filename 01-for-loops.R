@@ -16,7 +16,9 @@ ds3 <- read_tsv(file_names[3],  skip = 8, col_names = c("trial", "speed_actual",
 #...and so on
 
 #Any time we are iterating over a vector, a for loop can automate things
-#for every (*thing* in *list of things*) do {actions in a loop}
+#for each (*thing* in *list of things*) do 
+    #{actions in a loop}
+
 for (file in file_names) {
   print(file)
 }
@@ -26,23 +28,7 @@ for (file in file_names) {
 #First, let's set up a place to put the data as it comes in
 #Create a tibble with the right structure, then use filter(FALSE) to delete all the data
 ds <- read_tsv(file_names[1],  skip = 8, col_names = c("trial", "speed_actual", "speed_faster", "correct"))
-ds <- ds %>% filter(FALSE)
-
-#Loop through file names
-for (file in file_names) {
-  #Read the new data into a temporary dataset
-  temp_ds <- read_tsv(file,  skip = 8, col_names = c("trial", "speed_actual", "speed_faster", "correct"))
-  #Bind (append) the new data to the dataset
-  ds <- bind_rows(ds, temp_ds)
-}
-
-#What did we do wrong?
-
-
-
-#Redo the example above, but now save "file" into the data frame as an identifier
-ds <- read_tsv(file_names[1],  skip = 8, col_names = c("trial", "speed_actual", "speed_faster", "correct"))
-ds$file <- "file" #Does it matter what I put here?
+ds$file <- "file" #Create a place to put the filename in our template
 ds <- ds %>% filter(FALSE)
 
 #Loop through file names
